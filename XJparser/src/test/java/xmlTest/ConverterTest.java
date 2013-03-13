@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 import xml.ConverterToJSON;
 import xml.JDOMConverter;
 
+import org.json.JSONException;
 import org.junit.Test;
 
 import core.Methods;
@@ -72,8 +73,14 @@ public class ConverterTest {
 	public void generalTest() {
 		JDOMConverter jdc = new JDOMConverter(
 				"../test.xml", "../test3.json");
-		jdc.convert(true);
-		jdc.save();
-		jdc.print();
+		jdc.convert();
+		try {
+			jdc.save(2);
+			System.out.println(jdc.toString(2));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

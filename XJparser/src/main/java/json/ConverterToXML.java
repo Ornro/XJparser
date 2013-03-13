@@ -57,7 +57,6 @@ public class ConverterToXML {
 	public final String convertToXML(final String path,
 			final boolean typeHints) throws FileNotFoundException {
 		input = Methods.getFileAsString(path);
-		System.out.println(input);
 		XMLSerializer serializer = new XMLSerializer();
 		serializer.setTypeHintsEnabled(typeHints);
 		JSON serializedInput = JSONSerializer.toJSON(input);

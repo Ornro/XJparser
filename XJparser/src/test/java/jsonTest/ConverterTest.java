@@ -44,11 +44,7 @@ public class ConverterTest {
 		ConverterToXML converter = new ConverterToXML();
 		String s = "";
 		try {
-<<<<<<< HEAD
-			s = converter.convert("../test3.json",false);
-=======
-			s = converter.convertToXML("../test.json", false);
->>>>>>> 141c3bcba4867291eed009ff7be34bbc5df2fa52
+			s = converter.convertToXML("../test3.json",false);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -62,14 +58,8 @@ public class ConverterTest {
 	public final void saveTest() {
 		ConverterToXML converter = new ConverterToXML();
 		try {
-<<<<<<< HEAD
-			String output = converter.convert("../test3.json",false);
+			String output = converter.convertToXML("../test3.json",false);
 			Methods.save(output,"../test3.xml");
-=======
-			String output = converter.convertToXML("../test.json",
-					false);
-			Methods.save(output, "../test2.xml");
->>>>>>> 141c3bcba4867291eed009ff7be34bbc5df2fa52
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -78,13 +68,9 @@ public class ConverterTest {
 	 * Test the second way to convert JSON to XML
 	 */
 	@Test
-<<<<<<< HEAD
-	public final void jconvertTest(){
-		JSONConverter jc = new JSONConverter("../test3.json");
-=======
 	public final void jconvertTest() {
-		JSONConverter jc = new JSONConverter("../test.json");
->>>>>>> 141c3bcba4867291eed009ff7be34bbc5df2fa52
+		JSONConverter jc = new JSONConverter("../test2.json");
 		jc.convert();
+		jc.print(2);
 	}
 }

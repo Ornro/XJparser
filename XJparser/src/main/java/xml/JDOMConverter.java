@@ -57,11 +57,6 @@ public class JDOMConverter {
 	 */
 	private Element racine;
 	/**.
-	 * Contains string result
-	 * @see String
-	 */
-	private String result;
-	/**.
 	 * Contains input file path
 	 * @see String
 	 */
@@ -93,7 +88,7 @@ public class JDOMConverter {
 	 */
 	public JDOMConverter(final String iPath) {
 		this.inputPath = iPath;
-		this.outputPath = inputPath.split(".")[1].concat(".json");
+		this.outputPath = inputPath.split(".xml")[0].concat(".json");
 		build();
 	}
 
@@ -110,18 +105,12 @@ public class JDOMConverter {
 
 	/**.
 	 * Convert the outputprint to JSON segmentation
-	 * @param prettyOutput : boolean
 	 * @return boolean
 	 */
-	public final boolean convert(final boolean prettyOutput) {
+	public final boolean convert() {
 
 		try {
-			listNodes(racine);
-			if (prettyOutput) {
-				result = tree.get(0).toString(2);
-			} else {
-				result = tree.get(0).toString();
-			}
+			filter(racine);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -130,20 +119,35 @@ public class JDOMConverter {
 		return true;
 	}
 
+	public final void print(int format){
+		try {
+			this.toString(format);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	/**.
 	 * Print the result
 	 * @return String
 	 */
-	public final String print() {
-		return result;
+	public final String toString() {
+		return tree.get(0).toString();
+	}
+	
+	public final String toString(int format) throws JSONException{
+		return tree.get(0).toString(format);
 	}
 
 	/**.
 	 * Save the result into outputPath
+	 * @param format output format (2 = prety)
 	 * @return boolean
+	 * @throws JSONException 
 	 */
-	public final boolean save() {
-		return Methods.save(result, outputPath);
+	public final boolean save(int format) throws JSONException {
+		return Methods.save(this.toString(format), outputPath);
 	}
 
 	/**.
@@ -166,7 +170,7 @@ public class JDOMConverter {
 	 * @see JSONConverter#tree
 	 * @see JSONConverter#readJsonStream(InputStream)
 	 */
-	public final void listNodes(final Object o) throws JSONException {
+	public final void filter(final Object o) throws JSONException {
 		if (o instanceof Element) {
 			Element element = (Element) o;
 			String elemName = element.getName();
@@ -181,12 +185,12 @@ public class JDOMConverter {
 			// Attributes
 			while (ita.hasNext()) {
 				Object child = ita.next();
-				listNodes(child);
+				filter(child);
 			}
 			// Children
 			while (itc.hasNext()) {
 				Object child = itc.next();
-				listNodes(child);
+				filter(child);
 			}
 			handleArray(elemName);
 			tree.remove(current);

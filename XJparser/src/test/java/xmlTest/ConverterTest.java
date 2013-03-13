@@ -23,7 +23,7 @@ package xmlTest;
 
 import java.io.FileNotFoundException;
 
-import xml.Converter;
+import xml.ConverterToJSON;
 import xml.JDOMConverter;
 
 import org.junit.Test;
@@ -38,10 +38,10 @@ public class ConverterTest {
 
 	@Test
 	public void convertTest() {
-		Converter converter = new Converter();
+		ConverterToJSON converter = new ConverterToJSON();
 		String s = "";
 		try {
-			s = converter.convert("../test.xml", false);
+			s = converter.convertToJSON("../test.xml", false);
 			System.out.println(s);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -50,9 +50,9 @@ public class ConverterTest {
 
 	@Test
 	public void saveTest() {
-		Converter converter = new Converter();
+		ConverterToJSON converter = new ConverterToJSON();
 		try {
-			String output = converter.convert("../test.xml", false);
+			String output = converter.convertToJSON("../test.xml", false);
 			Methods.save(output, "../test2.json");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

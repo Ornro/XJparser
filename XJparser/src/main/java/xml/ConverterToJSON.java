@@ -32,7 +32,7 @@ import net.sf.json.xml.XMLSerializer;
  * @author Groupe 12
  * @version 1.0
  */
-public class Converter {
+public class ConverterToJSON {
 	/**.
 	 * String corresponding to input file 
 	 * String corresponding to output file
@@ -47,7 +47,7 @@ public class Converter {
 	 * @return String
 	 * @throws FileNotFoundException
 	 */
-	public final String convert(final String path, final boolean typeHints)
+	public final String convertToJSON(final String path, final boolean typeHints)
 			throws FileNotFoundException {
 		input = Methods.getFileAsString(path);
 

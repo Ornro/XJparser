@@ -5,11 +5,13 @@
 package gui;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import javax.swing.JFileChooser;
 
-import xml.JDOMConverter;
+import core.Methods;
+
+import json.ConverterToXML;
+import xml.ConverterToJSON;
 
 /**.
  * GUI
@@ -17,8 +19,10 @@ import xml.JDOMConverter;
  * @version 1.0
  */
 public class ConverterFile extends javax.swing.JFrame {
-    private Object textarea;
-    private JDOMConverter jdc;
+    private static final long serialVersionUID = 1L;
+	private String input, output, path;
+    private ConverterToXML converterToXML = new ConverterToXML();
+    private ConverterToJSON converterToJSON = new ConverterToJSON();
 
     /**
      * Creates new form ConverterFile
@@ -43,8 +47,6 @@ public class ConverterFile extends javax.swing.JFrame {
         jTextArea2 = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        BXmlToJson = new javax.swing.JButton();
-        BJsonToXml = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         Open = new javax.swing.JMenuItem();
@@ -67,15 +69,11 @@ public class ConverterFile extends javax.swing.JFrame {
 
         jLabel2.setText("JSON");
 
-        BXmlToJson.setText("Convert XML to JSON");
-
-        BJsonToXml.setText("Convert JSON to XML");
-
         jMenu1.setText("File");
 
         Open.setText("Open file");
         Open.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 OpenActionPerformed(evt);
             }
         });
@@ -83,7 +81,7 @@ public class ConverterFile extends javax.swing.JFrame {
 
         Exit.setText("Exit");
         Exit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(final java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ExitActionPerformed(evt);
             }
         });
@@ -100,37 +98,25 @@ public class ConverterFile extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(26, 26, 26)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(BJsonToXml)
-                            .addComponent(BXmlToJson)))
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(20, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(131, 131, 131)
-                        .addComponent(BXmlToJson)
-                        .addGap(129, 129, 129)
-                        .addComponent(BJsonToXml)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
 
@@ -141,50 +127,54 @@ public class ConverterFile extends javax.swing.JFrame {
 
         int returnVal = fileChooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
+        	//Init TextArea to ""
+        	jTextArea1.setText("");
+        	jTextArea2.setText("");
+        	
+        	//Catch the current file path
+        	path = fileChooser.getSelectedFile().toString();
+        	path = path.replace("\\", "/");
+        	
             File file = fileChooser.getSelectedFile();
-            
-            jdc = new JDOMConverter("../test.xml");
-            
+			try {
+				input = Methods.getFileAsString(path);
+
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
             if (file.getAbsolutePath().endsWith(".xml")){  
-                try {
-                  // What to do with the file, e.g. display it in a TextArea
-                  jTextArea1.read( new FileReader( file.getAbsolutePath() ), null );
-                } catch (IOException ex) {
-                  System.out.println("problem accessing file"+file.getAbsolutePath());
-                }
+				jTextArea1.setText(input);
+				try {
+					output = converterToJSON.convertToJSON(path, false);
+					jTextArea2.setText(output);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
             }else if (file.getAbsolutePath().endsWith(".json")){
-                    try {
-                      // What to do with the file, e.g. display it in a TextArea
-                      jTextArea2.read( new FileReader( file.getAbsolutePath() ), null );
-                    } catch (IOException ex) {
-                      System.out.println("problem accessing file"+file.getAbsolutePath());
-                    }   
+            	jTextArea2.setText(input); 
+            	try {
+					output = converterToXML.convertToXML(path, false);
+					jTextArea1.setText(output);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
             }else{
                 //Alert file not supported
             }
         } else {
             System.out.println("File access cancelled by user.");
         }
-    }//GEN-LAST:event_OpenActionPerformed
+    }
 
     private void ExitActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitActionPerformed
-        // TODO add your handling code here:
         System.exit(0);
-    }//GEN-LAST:event_ExitActionPerformed
+    }
 
-    private void BXmlToJsonActionPerformed(java.awt.event.ActionEvent evt) {                                           
-    	jdc.convert(true);
-    	jTextArea2.setText(jdc.print());
-    }                                          
-
-    private void BJsonToXmlActionPerformed(java.awt.event.ActionEvent evt) {                                           
-        // TODO add your handling code here:
-    } 
-    
     /**
      * @param args the command line arguments
      */
-    public static void main(final String[] args) {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -208,16 +198,14 @@ public class ConverterFile extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-//        /* Create and display the form */
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new ConverterFile().setVisible(true);
-//            }
-//        });
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new ConverterFile().setVisible(true);
+            }
+        });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton BJsonToXml;
-    private javax.swing.JButton BXmlToJson;
     private javax.swing.JMenuItem Exit;
     private javax.swing.JMenuItem Open;
     private javax.swing.JFileChooser fileChooser;

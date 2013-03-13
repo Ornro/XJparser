@@ -33,7 +33,7 @@ import net.sf.json.xml.XMLSerializer;
  * @author Groupe 12
  * @version 1.0
  */
-public class Converter {
+public class ConverterToXML {
 	/**.
 	 * String corresponding to input file 
 	 * String corresponding to output file
@@ -48,10 +48,10 @@ public class Converter {
 	 * @return String
 	 * @throws FileNotFoundException
 	 */
-	public final String convert(final String path, final boolean typeHints)
+	public final String convertToXML(final String path, final boolean typeHints)
 			throws FileNotFoundException {
 		input = Methods.getFileAsString(path);
-
+		System.out.println(input);
 		XMLSerializer serializer = new XMLSerializer();
 		serializer.setTypeHintsEnabled(typeHints);
 		JSON serializedInput = JSONSerializer.toJSON(input);

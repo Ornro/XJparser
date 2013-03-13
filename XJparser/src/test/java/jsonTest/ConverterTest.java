@@ -23,7 +23,7 @@ package jsonTest;
 
 import java.io.FileNotFoundException;
 
-import json.Converter;
+import json.ConverterToXML;
 import json.JSONConverter;
 
 import org.junit.Test;
@@ -39,10 +39,10 @@ public class ConverterTest{
 
 	@Test
 	public final void convertTest(){
-		Converter converter = new Converter();
+		ConverterToXML converter = new ConverterToXML();
 		String s = "";
 		try {
-			s = converter.convert("../test.json",false);
+			s = converter.convertToXML("C:/maven.1363180093323/test.json",false);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -51,10 +51,10 @@ public class ConverterTest{
 	
 	@Test
 	public final void saveTest(){
-		Converter converter = new Converter();
+		ConverterToXML converter = new ConverterToXML();
 		try {
-			String output = converter.convert("../test.json",false);
-			Methods.save(output,"../test2.xml");
+			String output = converter.convertToXML("C:/maven.1363180093323/test.json",false);
+			Methods.save(output,"C:/maven.1363180093323/test2.xml");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

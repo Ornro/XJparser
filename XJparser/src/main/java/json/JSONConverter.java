@@ -29,7 +29,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-import org.jdom2.Document;
 import org.jdom2.Element;
 
 import com.google.gson.stream.JsonReader;
@@ -40,15 +39,32 @@ import com.google.gson.stream.JsonReader;
  * @version 1.0
  */
 public class JSONConverter {
-
-	JsonReader reader;
-
+	/**
+	 *
+	 * @see JsonReader
+	 */
+	private JsonReader reader;
+	/**.
+	 * Contains the root of the XML file
+	 * @see Element
+	 */
 	private static Element racine = new Element("quizz");
-	private static Document document = new Document(racine);
+	/**.
+	 * Contains the tree which represent XML File
+	 * @see ArrayList<Element>
+	 */
 	private ArrayList<Element> tree = new ArrayList<Element>();
+	/**.
+	 * index variable
+	 * @see int
+	 */
 	private int current = 0;
 
-	public JSONConverter(String path) {
+	/**.
+	 * Allows to read a XML File
+	 * @param path : String
+	 */
+	public JSONConverter(final String path) {
 		try {
 			readJsonStream(new FileInputStream(path));
 			tree.add(racine);
@@ -57,29 +73,43 @@ public class JSONConverter {
 		}
 	}
 
+	/**.
+	 * True if convert success
+	 * @return boolean
+	 */
 	public final boolean convert() {
 		return convertJson();
 	}
-	
-	private Element getCurrentElement(){
+	/**.
+	 * "description de la fonction"
+	 * @param path
+	 * @return Element
+	 * @see JSONConverter#readJsonStream(InputStream)
+	 */
+	private Element getCurrentElement() {
 		return tree.get(current);
 	}
-	
-	private void nextElement(){
-		current ++;
-	}
-	
-	private void previousElement(){
-		current --;
+	/**.
+	 * Allows to find the next Element
+	*/
+	private void nextElement() {
+		current++;
 	}
 	/**.
-	 * @param InputStream
+	 * Allows to find the previous Element
+	 */
+	private void previousElement() {
+		current--;
+	}
+	/**.
+	 * @param in : InputStream
 	 * @return boolean
 	 * @throws IOException
 	 */
-	private final boolean readJsonStream(InputStream in) {
+	private boolean readJsonStream(final InputStream in) {
 		try {
-			reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+			reader = new JsonReader(new InputStreamReader(
+					in, "UTF-8"));
 			reader.setLenient(true);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -88,13 +118,17 @@ public class JSONConverter {
 		return true;
 	}
 	/**.
-	 * @return Boolean
+	 * Convert JSON to XML
+	 * @return boolean
+	 * @see JSONConverter#tree
+	 * @see JSONConverter#readJsonStream(InputStream)
 	 */
-	private final boolean convertJson() {
+	private boolean convertJson() {
 		try {
 			while (reader.hasNext()) {
-				if (filter(reader) == null)
+				if (filter(reader) == null) {
 					return true;
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -102,10 +136,14 @@ public class JSONConverter {
 		}
 		return true;
 	}
+
 	/**.
+	 * Return the convert file in String
 	 * @param reader
 	 * @return String
 	 * @throws IOException
+	 * @see JSONConverter#tree
+	 * @see JSONConverter#readJsonStream(InputStream)
 	 */
 	private String filter(final JsonReader reader) throws IOException {
 		switch (reader.peek()) {
@@ -144,7 +182,8 @@ public class JSONConverter {
 		case END_DOCUMENT:
 			reader.close();
 			return null;
-
+		default:
+			break;
 		}
 
 		return "";

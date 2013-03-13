@@ -10,20 +10,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-/**.
- * Method class for evrybody
+/**
+ * . Method class for everybody
  * @author Groupe 12
  * @version 1.0
  */
 public class Methods {
 
-
-/**
- * @param path.
- * @return inputStreamString
- * @throws FileNotFoundException
- */
-	public static final String getFileAsString(String path)
+	/**
+	 * . Allows to return the contents of input file from path file
+	 * @param path : String
+	 * @throws FileNotFoundException
+	 * @return the contents of input file"
+	 */
+	public static final String getFileAsString(final String path)
 			throws FileNotFoundException {
 		FileInputStream fis = new FileInputStream(path);
 		String inputStreamString = new Scanner(fis, "UTF-8")
@@ -33,11 +33,13 @@ public class Methods {
 	}
 
 	/**
-	 * @param output
-	 * @param path
-	 * @return sucess
+	 * . Save the conversion into a output file
+	 * @param output : String
+	 * @param path : String
+	 * @return boolean
 	 */
-	public static final boolean save(final String output, final String path) {
+	public static final boolean save(final String output,
+			final String path) {
 		FileWriter fstream;
 		BufferedWriter out;
 		boolean sucess = false;

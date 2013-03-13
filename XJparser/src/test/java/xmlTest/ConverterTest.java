@@ -17,7 +17,7 @@
  */
 
 /**
- *
+ * xmlTest package contains test class for convert XML to SON.
  */
 package xmlTest;
 
@@ -30,12 +30,16 @@ import org.junit.Test;
 
 import core.Methods;
 
-/**
- * 
- * @author Ben
+/**.
+ * Test class to convert XML to JSON
+ * @author Groupe 12
+ * @version 1.0
  */
 public class ConverterTest {
 
+	/**.
+	 * Convert JSON to XML
+	 */
 	@Test
 	public void convertTest() {
 		ConverterToJSON converter = new ConverterToJSON();
@@ -47,21 +51,27 @@ public class ConverterTest {
 			e.printStackTrace();
 		}
 	}
-
+	/**.
+	 * Save the conversion into a file
+	 */
 	@Test
 	public void saveTest() {
 		ConverterToJSON converter = new ConverterToJSON();
 		try {
-			String output = converter.convertToJSON("../test.xml", false);
+			String output = converter.convertToJSON(
+					"../test.xml", false);
 			Methods.save(output, "../test2.json");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-
+	/**.
+	 * Test the second way to convert XML to JSON
+	 */
 	@Test
 	public void generalTest() {
-		JDOMConverter jdc = new JDOMConverter("../test.xml", "../test3.json");
+		JDOMConverter jdc = new JDOMConverter(
+				"../test.xml", "../test3.json");
 		jdc.convert(true);
 		jdc.save();
 		jdc.print();

@@ -34,20 +34,27 @@ import net.sf.json.xml.XMLSerializer;
  */
 public class ConverterToJSON {
 	/**.
-	 * String corresponding to input file 
-	 * String corresponding to output file
+	 * Contents of input file
+	 * @see String
 	 */
 	private String input;
+	/**.
+	 * Contents of output file
+	 * @see String
+	 */
 	private String output;
 
 	/**.
-	 * @param path
-	 * @param typeHints
-	 *            : relative path of the file to convert.
-	 * @return String
+	 * Allow to convert XML to JSON
+	 * @param path relative path of the file to convert.
+	 * @param typeHints : boolean
+	 * @return output
 	 * @throws FileNotFoundException
+	 * @see Converter#input
+	 * @see Converter#output
 	 */
-	public final String convertToJSON(final String path, final boolean typeHints)
+	public final String convertToJSON(
+			final String path, final boolean typeHints)
 			throws FileNotFoundException {
 		input = Methods.getFileAsString(path);
 

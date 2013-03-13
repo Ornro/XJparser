@@ -17,7 +17,7 @@
  */
 
 /**
- *
+ * jsonTest package contains test class for convert JSON to XML.
  */
 package jsonTest;
 
@@ -30,38 +30,46 @@ import org.junit.Test;
 
 import core.Methods;
 
-
-/**
- *
- * @author Ben
+/**.
+ * Test class to convert JSON to XML
+ * @author Groupe 12
+ * @version 1.0
  */
-public class ConverterTest{
-
+public class ConverterTest {
+	/**.
+	 * Convert JSON to XML
+	 */
 	@Test
-	public final void convertTest(){
+	public final void convertTest() {
 		ConverterToXML converter = new ConverterToXML();
 		String s = "";
 		try {
-			s = converter.convertToXML("C:/maven.1363180093323/test.json",false);
+			s = converter.convertToXML("../test.json", false);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		System.out.println(s);
 	}
-	
+
+	/**.
+	 * Save the conversion into a file
+	 */
 	@Test
-	public final void saveTest(){
+	public final void saveTest() {
 		ConverterToXML converter = new ConverterToXML();
 		try {
-			String output = converter.convertToXML("C:/maven.1363180093323/test.json",false);
-			Methods.save(output,"C:/maven.1363180093323/test2.xml");
+			String output = converter.convertToXML("../test.json",
+					false);
+			Methods.save(output, "../test2.xml");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-	
+	/**.
+	 * Test the second way to convert JSON to XML
+	 */
 	@Test
-	public final void jconvertTest(){
+	public final void jconvertTest() {
 		JSONConverter jc = new JSONConverter("../test.json");
 		jc.convert();
 	}

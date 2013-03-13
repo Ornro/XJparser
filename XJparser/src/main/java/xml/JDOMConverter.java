@@ -18,12 +18,15 @@
 package xml;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.jdom2.input.SAXBuilder;
 import org.jdom2.Attribute;
-import org.jdom2.Element;
 import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Text;
+import org.jdom2.input.SAXBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,35 +35,42 @@ import core.Methods;
 
 public class JDOMConverter {
 
-	private static Document document;
-	private static Element racine;
+	private Document document;
+	private Element racine;
 	private String result;
-	private static String inputPath;
-	private static String outputPath;
+	private String inputPath;
+	private String outputPath;
+	private ArrayList<JSONObject> tree = new ArrayList<JSONObject>();
+	private int current = 0;
+	private boolean skipp = false;
 
 	public JDOMConverter(String inputPath) {
 		this.inputPath = inputPath;
 		this.outputPath = inputPath.split(".")[1].concat(".json");
 		build();
 	}
-	
-	public JDOMConverter(String inputPath, String outputPath){
+
+	public JDOMConverter(String inputPath, String outputPath) {
 		this.inputPath = inputPath;
 		this.outputPath = outputPath;
 		build();
 	}
 
 	public final boolean convert(boolean prettyOutput) {
+
 		try {
+			listNodes(racine);
 			if (prettyOutput) {
-				result = convertElem(racine).toString(2);
-			} else {
-				result = convertElem(racine).toString(2);
+				result = tree.get(0).toString(2);
+			}
+			else{
+				result = tree.get(0).toString();
 			}
 		} catch (JSONException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return false;
 		}
+
 		return true;
 	}
 
@@ -69,7 +79,7 @@ public class JDOMConverter {
 	}
 
 	public final boolean save() {
-		return Methods.save(result,outputPath);
+		return Methods.save(result, outputPath);
 	}
 
 	private void build() {
@@ -80,38 +90,68 @@ public class JDOMConverter {
 			e.printStackTrace();
 		}
 		racine = document.getRootElement();
+		tree.add(current, new JSONObject());
 	}
 
-	private JSONObject convertElem(Element root) {
-		JSONObject obj = new JSONObject();
-		JSONArray list = new JSONArray();
-		List<Element> children = root.getChildren();
+	public void listNodes(Object o) throws JSONException {
+		if (o instanceof Element) {
+			Element element = (Element) o;
+			String elemName = element.getName();
+			List children = element.getContent();
+			List attribute = element.getAttributes();
+			Iterator ita = attribute.iterator();
+			Iterator itc = children.iterator();
 
-		if (root.hasAttributes()) {
-			convertAttributes(root.getAttributes(), obj);
-		}
-		if (!children.isEmpty()) {
-			for (Element child : children) {
-				list.put(convertElem(child));
-			}
-			try {
-				obj.put(children.get(1).getName(), list);
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-		}
+			current++;
+			tree.add(current, new JSONObject());
 
-		return obj;
+			// Attributes
+			while (ita.hasNext()) {
+				Object child = ita.next();
+				listNodes(child);
+			}
+			// Children
+			while (itc.hasNext()) {
+				Object child = itc.next();
+				listNodes(child);
+			}
+			handleArray(elemName);
+			tree.remove(current);
+			current--;
+		} else if (o instanceof Attribute) {
+			handleAttribute((Attribute) o);
+		} else if (o instanceof Text) {
+			handleText((Text) o);
+		}
 	}
 
-	private void convertAttributes(final List<Attribute> attributes,
-			JSONObject obj) {
-		try {
-			for (Attribute attrib : attributes) {
-				obj.put(attrib.getName(), attrib.getValue());
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
+	private void handleAttribute(Attribute a) throws JSONException {
+		tree.get(current).put(a.getName(), a.getValue());
+	}
+
+	private void handleText(Text t) throws JSONException {
+		String str = t.getTextNormalize();
+		if (!str.isEmpty()) {
+			String parent = t.getParent().getName();
+			tree.get(current - 1).put(parent, str);
+			skipp = true;
 		}
+	}
+
+	private void handleArray(String elemName) throws JSONException {
+		if (!skipp) {
+			if (tree.get(current - 1).has(elemName)) {
+				JSONArray jsa = new JSONArray();
+				jsa.put(tree.get(current - 1).get(elemName));
+				jsa.put(tree.get(current));
+				tree.remove(tree.get(current - 1).get(elemName));
+				tree.get(current - 1).put(elemName, jsa);
+			} else {
+				tree.get(current - 1).put(elemName, tree.get(current));
+			}
+		} else {
+			skipp = false;
+		}
+
 	}
 }

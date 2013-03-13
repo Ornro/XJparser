@@ -24,8 +24,11 @@ package jsonTest;
 import java.io.FileNotFoundException;
 
 import json.Converter;
+import json.JSONConverter;
 
 import org.junit.Test;
+
+import core.Methods;
 
 
 /**
@@ -50,10 +53,16 @@ public class ConverterTest{
 	public final void saveTest(){
 		Converter converter = new Converter();
 		try {
-			converter.convert("../test.json",false);
-			converter.save("../test.xml");
+			String output = converter.convert("../test.json",false);
+			Methods.save(output,"../test2.xml");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public final void jconvertTest(){
+		JSONConverter jc = new JSONConverter("../test.json");
+		jc.convert();
 	}
 }

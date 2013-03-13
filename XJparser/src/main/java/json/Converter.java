@@ -21,7 +21,7 @@
  */
 package json;
 
-import generique.Generique;
+import core.Methods;
 
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -37,7 +37,10 @@ import net.sf.json.xml.XMLSerializer;
 /**
  * @author Ben
  */
-public class Converter extends Generique {
+public class Converter {
+
+	private String input;
+	private String output;
 
 	/**
 	 * @param path
@@ -48,7 +51,7 @@ public class Converter extends Generique {
 	 */
 	public final String convert(final String path, final boolean typeHints)
 			throws FileNotFoundException {
-		input = getFileAsString(path);
+		input = Methods.getFileAsString(path);
 
 		XMLSerializer serializer = new XMLSerializer();
 		serializer.setTypeHintsEnabled(typeHints);

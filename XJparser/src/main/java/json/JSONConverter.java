@@ -15,6 +15,10 @@
  * or implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
+/**
+ * json is the name package of classes which allow to convert JSON to XML.
+ */
 package json;
 
 import java.io.FileInputStream;
@@ -30,6 +34,11 @@ import org.jdom2.Element;
 
 import com.google.gson.stream.JsonReader;
 
+/**.
+ * JSONConverter allow to convert JSON to XML thanks to JSON methods
+ * @author Groupe 12
+ * @version 1.0
+ */
 public class JSONConverter {
 
 	JsonReader reader;
@@ -63,7 +72,11 @@ public class JSONConverter {
 	private void previousElement(){
 		current --;
 	}
-
+	/**.
+	 * @param InputStream
+	 * @return boolean
+	 * @throws IOException
+	 */
 	private final boolean readJsonStream(InputStream in) {
 		try {
 			reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
@@ -74,7 +87,9 @@ public class JSONConverter {
 		}
 		return true;
 	}
-
+	/**.
+	 * @return Boolean
+	 */
 	private final boolean convertJson() {
 		try {
 			while (reader.hasNext()) {
@@ -87,8 +102,12 @@ public class JSONConverter {
 		}
 		return true;
 	}
-
-	private final String filter(JsonReader reader) throws IOException {
+	/**.
+	 * @param reader
+	 * @return String
+	 * @throws IOException
+	 */
+	private String filter(final JsonReader reader) throws IOException {
 		switch (reader.peek()) {
 		case STRING:
 			System.out.println(" " + reader.nextString());

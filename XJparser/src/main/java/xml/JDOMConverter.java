@@ -22,17 +22,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Text;
 import org.jdom2.input.SAXBuilder;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import core.Methods;
 
+/**.
+ * JDOMConverter allow to convert XML to JSON thanks to JDOM methods
+ * @author Groupe 12
+ * @version 1.0
+ */
 public class JDOMConverter {
 
 	private Document document;
@@ -74,8 +79,8 @@ public class JDOMConverter {
 		return true;
 	}
 
-	public final void print() {
-		System.out.println(result);
+	public final String print() {
+		return result;
 	}
 
 	public final boolean save() {

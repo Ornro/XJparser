@@ -15,44 +15,49 @@
  * or implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 /**
- *
+ * json is the name package of classes which allow to convert JSON to XML.
  */
 package json;
 
 import core.Methods;
 
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Scanner;
 
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 import net.sf.json.xml.XMLSerializer;
 
-/**
- * @author Ben
+/**.
+ * Converter allow to convert JSON to XML thanks to JSON methods
+ * @author Groupe 12
+ * @version 1.0
  */
-public class Converter {
-
+public class ConverterToXML {
+	/**.
+	 * Contents of input file
+	 * @see String
+	 */
 	private String input;
+	/**.
+	 * Contents of output file
+	 * @see String
+	 */
 	private String output;
 
-	/**
-	 * @param path
-	 * @param typeHints
-	 *            relative path of the file to convert.
-	 * @return String
+	/**.
+	 * Allow to convert JSON to XML
+	 * @param path relative path of the file to convert.
+	 * @param typeHints : boolean
+	 * @return output
 	 * @throws FileNotFoundException
+	 * @see Converter#input
+	 * @see Converter#output
 	 */
-	public final String convert(final String path, final boolean typeHints)
-			throws FileNotFoundException {
+	public final String convertToXML(final String path,
+			final boolean typeHints) throws FileNotFoundException {
 		input = Methods.getFileAsString(path);
-
+		System.out.println(input);
 		XMLSerializer serializer = new XMLSerializer();
 		serializer.setTypeHintsEnabled(typeHints);
 		JSON serializedInput = JSONSerializer.toJSON(input);

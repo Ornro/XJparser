@@ -1,3 +1,6 @@
+/**
+ * core is the name package of Method class.
+ */
 package core;
 
 import java.io.BufferedWriter;
@@ -7,16 +10,20 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * . Method class for everybody
+ * @author Groupe 12
+ * @version 1.0
+ */
 public class Methods {
 
-
 	/**
-	 * 
-	 * @param path
-	 * @return
+	 * . Allows to return the contents of input file from path file
+	 * @param path : String
 	 * @throws FileNotFoundException
+	 * @return the contents of input file"
 	 */
-	public final static String getFileAsString(String path)
+	public static final String getFileAsString(final String path)
 			throws FileNotFoundException {
 		FileInputStream fis = new FileInputStream(path);
 		String inputStreamString = new Scanner(fis, "UTF-8")
@@ -26,11 +33,13 @@ public class Methods {
 	}
 
 	/**
-	 * 
-	 * @param path
-	 * @return
+	 * . Save the conversion into a output file
+	 * @param output : String
+	 * @param path : String
+	 * @return boolean
 	 */
-	public final static boolean save(String output, String path) {
+	public static final boolean save(final String output,
+			final String path) {
 		FileWriter fstream;
 		BufferedWriter out;
 		boolean sucess = false;

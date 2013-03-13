@@ -15,34 +15,51 @@
  * or implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
+/**
+ * xml is the name package of classes which allow to convert XML to JSON.
+ */
 package xml;
 
-		
 import core.Methods;
 
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Scanner;
 
 import net.sf.json.JSON;
-import net.sf.json.JSONSerializer;
 import net.sf.json.xml.XMLSerializer;
 
-public class Converter {
+/**.
+ * Converter allow to convert XML to JSON thanks to JSON methods
+ * @author Groupe 12
+ * @version 1.0
+ */
+public class ConverterToJSON {
+	/**.
+	 * Contents of input file
+	 * @see String
+	 */
 	private String input;
+	/**.
+	 * Contents of output file
+	 * @see String
+	 */
 	private String output;
 
-	public final String convert(final String path, final boolean typeHints)
+	/**.
+	 * Allow to convert XML to JSON
+	 * @param path relative path of the file to convert.
+	 * @param typeHints : boolean
+	 * @return output
+	 * @throws FileNotFoundException
+	 * @see Converter#input
+	 * @see Converter#output
+	 */
+	public final String convertToJSON(
+			final String path, final boolean typeHints)
 			throws FileNotFoundException {
 		input = Methods.getFileAsString(path);
 
 		XMLSerializer serializer = new XMLSerializer();
-		JSON json = serializer.read( input );
+		JSON json = serializer.read(input);
 		output = json.toString(2);
 
 		return output;

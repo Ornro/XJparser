@@ -15,55 +15,111 @@
  * or implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
+/**
+ * xml is the name package of classes which allow to convert XML to JSON.
+ */
 package xml;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import json.JSONConverter;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Text;
 import org.jdom2.input.SAXBuilder;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import core.Methods;
 
+/**.
+ * JDOMConverter allow to convert XML to JSON thanks to JDOM methods
+ * @author Groupe 12
+ * @version 1.0
+ */
 public class JDOMConverter {
-
+	/**.
+	 * Contains the root of the XML file
+	 * @see Document
+	 */
 	private Document document;
+	/**.
+	 * Contains the root of the XML file
+	 * @see Element
+	 */
 	private Element racine;
+	/**.
+	 * Contains string result
+	 * @see String
+	 */
 	private String result;
+	/**.
+	 * Contains input file path
+	 * @see String
+	 */
 	private String inputPath;
+	/**.
+	 * Contains output file path
+	 * @see String
+	 */
 	private String outputPath;
+	/**.
+	 * Contains the tree of input file
+	 * @see ArrayList<JSONObject>
+	 */
 	private ArrayList<JSONObject> tree = new ArrayList<JSONObject>();
+	/**.
+	 * index
+	 * @see int
+	 */
 	private int current = 0;
+	/**.
+	 * Allow to skip
+	 * @see boolean
+	 */
 	private boolean skipp = false;
 
-	public JDOMConverter(String inputPath) {
-		this.inputPath = inputPath;
+	/**.
+	 * Constructor
+	 * @param iPath : String
+	 */
+	public JDOMConverter(final String iPath) {
+		this.inputPath = iPath;
 		this.outputPath = inputPath.split(".")[1].concat(".json");
 		build();
 	}
 
-	public JDOMConverter(String inputPath, String outputPath) {
-		this.inputPath = inputPath;
-		this.outputPath = outputPath;
+	/**.
+	 * Constructor
+	 * @param iPath : String
+	 * @param oPath : String
+	 */
+	public JDOMConverter(final String iPath, final String oPath) {
+		this.inputPath = iPath;
+		this.outputPath = oPath;
 		build();
 	}
 
-	public final boolean convert(boolean prettyOutput) {
+	/**.
+	 * Convert the outputprint to JSON segmentation
+	 * @param prettyOutput : boolean
+	 * @return boolean
+	 */
+	public final boolean convert(final boolean prettyOutput) {
 
 		try {
 			listNodes(racine);
 			if (prettyOutput) {
 				result = tree.get(0).toString(2);
-			}
-			else{
+			} else {
 				result = tree.get(0).toString();
 			}
 		} catch (JSONException e) {
@@ -74,14 +130,25 @@ public class JDOMConverter {
 		return true;
 	}
 
-	public final void print() {
-		System.out.println(result);
+	/**.
+	 * Print the result
+	 * @return String
+	 */
+	public final String print() {
+		return result;
 	}
 
+	/**.
+	 * Save the result into outputPath
+	 * @return boolean
+	 */
 	public final boolean save() {
 		return Methods.save(result, outputPath);
 	}
 
+	/**.
+	 * Build the tree corresponding to XML file
+	 */
 	private void build() {
 		SAXBuilder sxb = new SAXBuilder();
 		try {
@@ -92,8 +159,14 @@ public class JDOMConverter {
 		racine = document.getRootElement();
 		tree.add(current, new JSONObject());
 	}
-
-	public void listNodes(Object o) throws JSONException {
+	/**.
+	 * Allows to list the node
+	 * @param o : Object
+	 * @thows JSONException
+	 * @see JSONConverter#tree
+	 * @see JSONConverter#readJsonStream(InputStream)
+	 */
+	public final void listNodes(final Object o) throws JSONException {
 		if (o instanceof Element) {
 			Element element = (Element) o;
 			String elemName = element.getName();
@@ -125,11 +198,11 @@ public class JDOMConverter {
 		}
 	}
 
-	private void handleAttribute(Attribute a) throws JSONException {
+	private void handleAttribute(final Attribute a) throws JSONException {
 		tree.get(current).put(a.getName(), a.getValue());
 	}
 
-	private void handleText(Text t) throws JSONException {
+	private void handleText(final Text t) throws JSONException {
 		String str = t.getTextNormalize();
 		if (!str.isEmpty()) {
 			String parent = t.getParent().getName();
@@ -138,16 +211,18 @@ public class JDOMConverter {
 		}
 	}
 
-	private void handleArray(String elemName) throws JSONException {
+	private void handleArray(final String elemName) throws JSONException {
 		if (!skipp) {
 			if (tree.get(current - 1).has(elemName)) {
 				JSONArray jsa = new JSONArray();
 				jsa.put(tree.get(current - 1).get(elemName));
 				jsa.put(tree.get(current));
-				tree.remove(tree.get(current - 1).get(elemName));
+				tree.remove(tree.get(
+						current - 1).get(elemName));
 				tree.get(current - 1).put(elemName, jsa);
 			} else {
-				tree.get(current - 1).put(elemName, tree.get(current));
+				tree.get(current - 1).put(
+						elemName, tree.get(current));
 			}
 		} else {
 			skipp = false;

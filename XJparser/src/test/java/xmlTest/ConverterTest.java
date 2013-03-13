@@ -17,51 +17,61 @@
  */
 
 /**
- *
+ * xmlTest package contains test class for convert XML to SON.
  */
 package xmlTest;
 
 import java.io.FileNotFoundException;
 
-import xml.Converter;
+import xml.ConverterToJSON;
 import xml.JDOMConverter;
 
 import org.junit.Test;
 
 import core.Methods;
 
-/**
- * 
- * @author Ben
+/**.
+ * Test class to convert XML to JSON
+ * @author Groupe 12
+ * @version 1.0
  */
 public class ConverterTest {
 
+	/**.
+	 * Convert JSON to XML
+	 */
 	@Test
 	public void convertTest() {
-		Converter converter = new Converter();
+		ConverterToJSON converter = new ConverterToJSON();
 		String s = "";
 		try {
-			s = converter.convert("../test.xml", false);
+			s = converter.convertToJSON("../test.xml", false);
 			System.out.println(s);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-
+	/**.
+	 * Save the conversion into a file
+	 */
 	@Test
 	public void saveTest() {
-		Converter converter = new Converter();
+		ConverterToJSON converter = new ConverterToJSON();
 		try {
-			String output = converter.convert("../test.xml", false);
+			String output = converter.convertToJSON(
+					"../test.xml", false);
 			Methods.save(output, "../test2.json");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
-
+	/**.
+	 * Test the second way to convert XML to JSON
+	 */
 	@Test
 	public void generalTest() {
-		JDOMConverter jdc = new JDOMConverter("../test.xml", "../test3.json");
+		JDOMConverter jdc = new JDOMConverter(
+				"../test.xml", "../test3.json");
 		jdc.convert(true);
 		jdc.save();
 		jdc.print();

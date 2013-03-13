@@ -21,115 +21,101 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
-import com.google.gson.stream.JsonReader;
+import core.Methods;
 
 public class JSONConverter {
 
-	JsonReader reader;
-
 	private static Element racine = new Element("quizz");
-	private static Document document = new Document(racine);
+	private static Document document;
 	private ArrayList<Element> tree = new ArrayList<Element>();
-	private int current = 0;
+	private int index = 0;
+	private JSONObject jo;
+	
 
 	public JSONConverter(String path) {
 		try {
-			readJsonStream(new FileInputStream(path));
-			tree.add(racine);
+			JSONTokener jstk = new JSONTokener(Methods.getFileAsString(path));
+			jo = new JSONObject(jstk);
+			tree.add(0, racine);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}
-	}
-
-	public final boolean convert() {
-		return convertJson();
-	}
-	
-	private Element getCurrentElement(){
-		return tree.get(current);
-	}
-	
-	private void nextElement(){
-		current ++;
-	}
-	
-	private void previousElement(){
-		current --;
-	}
-
-	private final boolean readJsonStream(InputStream in) {
-		try {
-			reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
-			reader.setLenient(true);
-		} catch (UnsupportedEncodingException e) {
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return false;
 		}
-		return true;
 	}
 
-	private final boolean convertJson() {
+	public void convert(){
+		Map<String, Object> map = new HashMap<String, Object>();
+		toJavaMap(jo,map);
+		System.out.println(map);
+	}
+
+	private void toJavaMap(JSONObject o, Map<String, Object> b) {
 		try {
-			while (reader.hasNext()) {
-				if (filter(reader) == null)
-					return true;
+			Iterator ji = o.keys();
+			while (ji.hasNext()) {
+				String key = (String) ji.next();
+				Object val = o.get(key);
+				
+				if (val.getClass() == JSONObject.class) {
+					System.out.println("Object = "+key);
+					Map<String, Object> sub = new HashMap<String, Object>();
+					index++;
+					Element e = new Element(key);
+					tree.add(index,e);
+					toJavaMap((JSONObject) val, sub);
+					index--;
+					tree.get(index).addContent(e);
+					b.put(key, sub);
+					
+				} else if (val.getClass() == JSONArray.class) {
+					System.out.println("Array = "+key);
+					List<Object> l = new ArrayList<Object>();
+					JSONArray arr = (JSONArray) val;
+					
+					for (int a = 0; a < (arr).length(); a++) {
+						Map<String, Object> sub = new HashMap<String, Object>();
+						Object element;
+						element = arr.get(a);
+						index++;
+						Element e = new Element(key);
+						tree.add(index,e);
+						if (element instanceof JSONObject) {
+							toJavaMap((JSONObject) element, sub);
+							l.add(sub);
+						} else {
+							l.add(element);
+						}
+						
+					}
+					b.put(key, l);
+				} else {
+					System.out.println("Value = "+key);
+					Element e = new Element(key);
+					tree.get(index).addContent(e);
+					
+					e.addContent(val.toString());
+					b.put(key, val);
+				}
 			}
-		} catch (IOException e) {
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return false;
 		}
-		return true;
-	}
-
-	private final String filter(JsonReader reader) throws IOException {
-		switch (reader.peek()) {
-		case STRING:
-			System.out.println(" " + reader.nextString());
-			break;
-		case NUMBER:
-			Double d = reader.nextDouble();
-			System.out.println(" " + d.toString());
-			break;
-		case BOOLEAN:
-			Boolean b = reader.nextBoolean();
-			System.out.println(" " + b.toString());
-			break;
-		case BEGIN_ARRAY:
-			System.out.println("begin array");
-			reader.beginArray();
-			break;
-		case BEGIN_OBJECT:
-			System.out.println("begin obj");
-			reader.beginObject();
-			break;
-		case END_ARRAY:
-			System.out.println("end array");
-			reader.endArray();
-			break;
-		case END_OBJECT:
-			System.out.println("end obj");
-			reader.endObject();
-			break;
-		case NAME:
-			System.out.println(reader.nextName());
-			break;
-		case NULL:
-			break;
-		case END_DOCUMENT:
-			reader.close();
-			return null;
-
-		}
-
-		return "";
-
 	}
 
 }

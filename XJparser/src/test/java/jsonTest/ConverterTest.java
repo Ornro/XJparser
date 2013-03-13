@@ -42,7 +42,7 @@ public class ConverterTest{
 		Converter converter = new Converter();
 		String s = "";
 		try {
-			s = converter.convert("../test.json",false);
+			s = converter.convert("../test3.json",false);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -53,8 +53,8 @@ public class ConverterTest{
 	public final void saveTest(){
 		Converter converter = new Converter();
 		try {
-			String output = converter.convert("../test.json",false);
-			Methods.save(output,"../test2.xml");
+			String output = converter.convert("../test3.json",false);
+			Methods.save(output,"../test3.xml");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -62,7 +62,7 @@ public class ConverterTest{
 	
 	@Test
 	public final void jconvertTest(){
-		JSONConverter jc = new JSONConverter("../test.json");
+		JSONConverter jc = new JSONConverter("../test3.json");
 		jc.convert();
 	}
 }

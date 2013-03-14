@@ -22,7 +22,6 @@
 package json;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -39,24 +38,40 @@ import org.json.JSONTokener;
 import core.Methods;
 
 /**
- * . JSONConverter allow to convert JSON to XML thanks to JSON methods
+ * . JSONConverter allow to convert JSON to XML thanks to org.json and org.jdom2
+ * methods
  * 
  * @author Groupe 12
  * @version 1.0
  */
 public class JSONConverter {
 
+	/**
+	 * . Document representing the converted document
+	 */
 	private static Document document;
+
+	/**
+	 * . JSONObject containing the initial json object to convert
+	 */
 	private JSONObject jo;
+
+	/**
+	 * . Boolean telling if converter has been initialized. true = not
+	 * initialized
+	 */
 	private boolean firstCall = true;
-	
-	/**.
-	 * Contains input file path
+
+	/**
+	 * . Contains input file path
+	 * 
 	 * @see String
 	 */
 	private String inputPath;
-	/**.
-	 * Contains output file path
+
+	/**
+	 * . Contains output file path
+	 * 
 	 * @see String
 	 */
 	private String outputPath;
@@ -67,18 +82,17 @@ public class JSONConverter {
 	 * @see ArrayList<Element>
 	 */
 	private ArrayList<Element> tree = new ArrayList<Element>();
+
 	/**
-	 * . index variable
-	 * 
-	 * @see int
+	 * . Current index in the tree
 	 */
 	private int index = 0;
 
-	
-
-	/**.
-	 * Constructor
-	 * @param iPath : String
+	/**
+	 * . Constructor
+	 * 
+	 * @param iPath
+	 *            : String path of the file to convert
 	 */
 	public JSONConverter(final String iPath) {
 		this.inputPath = iPath;
@@ -86,10 +100,13 @@ public class JSONConverter {
 		build();
 	}
 
-	/**.
-	 * Constructor
-	 * @param iPath : String
-	 * @param oPath : String
+	/**
+	 * . Constructor
+	 * 
+	 * @param iPath
+	 *            : String path of the file to convert
+	 * @param oPath
+	 *            : String the output where the file will be saved.
 	 */
 	public JSONConverter(final String iPath, final String oPath) {
 		this.inputPath = iPath;
@@ -97,9 +114,13 @@ public class JSONConverter {
 		build();
 	}
 
-	private final void build(){
+	/**
+	 * . Builds the initial JSON object.
+	 */
+	private void build() {
 		try {
-			JSONTokener jstk = new JSONTokener(Methods.getFileAsString(inputPath));
+			JSONTokener jstk = new JSONTokener(
+					Methods.getFileAsString(inputPath));
 			jo = new JSONObject(jstk);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -108,10 +129,13 @@ public class JSONConverter {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * . Converts the built JSONObject
+	 */
 	public void convert() {
 		try {
-			toJavaMap(jo);
+			filter(jo);
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -119,31 +143,60 @@ public class JSONConverter {
 		document = new Document(tree.get(0));
 	}
 
+	/**
+	 * . Prints the result
+	 * 
+	 * @param format
+	 *            if 2 is specified uses prettyFormat {@link Format}
+	 */
 	public void print(int format) {
 		System.out.println(this.toString(format));
 	}
-	
-	public final String toString(){
+
+	/*
+	 * Non j-doc
+	 * 
+	 * @see java.lang.String
+	 */
+	@Override
+	public final String toString() {
 		XMLOutputter sortie = new XMLOutputter();
 		return sortie.outputString(document);
 	}
 
-	public final String toString(int format){
+	/**
+	 * . Gives a string representation of the object
+	 * 
+	 * @param format
+	 *            uses prettyFormat if format is 2
+	 * @return String representation of the object
+	 */
+	public final String toString(int format) {
 		XMLOutputter sortie;
-		if (format == 2){
+		if (format == 2) {
 			sortie = new XMLOutputter(Format.getPrettyFormat());
-		}
-		else{
+		} else {
 			sortie = new XMLOutputter();
 		}
 		return sortie.outputString(document);
 	}
-	
-	public void save(){
-		
+
+	/**
+	 * . Saves the converted content in the specified file if no file was
+	 * specified in the constructor default is applied
+	 * 
+	 * @param format @see toString(int format)
+	 */
+	public void save(int format) {
+		Methods.save(this.toString(format), outputPath);
 	}
 
-	private void toJavaMap(JSONObject o) throws JSONException {
+	/**
+	 * Filters a JSONObject to convert it
+	 * @param o the object to convert
+	 * @throws JSONException
+	 */
+	private void filter(JSONObject o) throws JSONException {
 		Iterator ji = o.keys();
 		while (ji.hasNext()) {
 			String key = (String) ji.next();
@@ -154,14 +207,14 @@ public class JSONConverter {
 					Element e = new Element(key);
 					tree.add(index, e);
 
-					toJavaMap((JSONObject) val);
+					filter((JSONObject) val);
 					index--;
 					tree.get(index).addContent(e);
-				}else{
+				} else {
 					firstCall = false;
 					Element e = new Element(key);
 					tree.add(index, e);
-					toJavaMap((JSONObject) val);
+					filter((JSONObject) val);
 				}
 			} else if (val.getClass() == JSONArray.class) {
 				List<Object> l = new ArrayList<Object>();
@@ -174,7 +227,7 @@ public class JSONConverter {
 					Element e = new Element(key);
 					tree.add(index, e);
 					if (element instanceof JSONObject) {
-						toJavaMap((JSONObject) element);
+						filter((JSONObject) element);
 					} else {
 						Element e2 = new Element(key);
 						e2.addContent(val.toString());

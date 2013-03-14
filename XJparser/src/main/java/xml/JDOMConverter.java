@@ -164,7 +164,7 @@ public class JDOMConverter {
 		tree.add(current, new JSONObject());
 	}
 	/**.
-	 * Allows to list the node
+	 * Filters the object to convert it
 	 * @param o : Object
 	 * @thows JSONException
 	 * @see JSONConverter#tree
@@ -202,10 +202,20 @@ public class JDOMConverter {
 		}
 	}
 
+	/**.
+	 * Handles the case where the object in filter is an attribute
+	 * @param a the filtered attribute
+	 * @throws JSONException
+	 */
 	private void handleAttribute(final Attribute a) throws JSONException {
 		tree.get(current).put(a.getName(), a.getValue());
 	}
 
+	/**.
+	 * Handles the case where the object in filter is a text
+	 * @param a the filtered text
+	 * @throws JSONException
+	 */
 	private void handleText(final Text t) throws JSONException {
 		String str = t.getTextNormalize();
 		if (!str.isEmpty()) {
@@ -215,6 +225,11 @@ public class JDOMConverter {
 		}
 	}
 
+	/**.
+	 * Handles the case where the object in filter is an array
+	 * @param a the filtered array
+	 * @throws JSONException
+	 */
 	private void handleArray(final String elemName) throws JSONException {
 		if (!skipp) {
 			if (tree.get(current - 1).has(elemName)) {

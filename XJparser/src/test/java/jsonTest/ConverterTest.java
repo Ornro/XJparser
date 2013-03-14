@@ -59,7 +59,7 @@ public class ConverterTest {
 		ConverterToXML converter = new ConverterToXML();
 		try {
 			String output = converter.convertToXML("../test3.json",false);
-			Methods.save(output,"../test3.xml");
+			Methods.save(output, "../test3.xml");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

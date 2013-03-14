@@ -10,12 +10,12 @@ package gui;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+
 import javax.swing.JFileChooser;
 
+import json.JSONConverter;
+import xml.JDOMConverter;
 import core.Methods;
-
-import json.ConverterToXML;
-import xml.ConverterToJSON;
 
 /**
  * . GUI
@@ -26,8 +26,6 @@ import xml.ConverterToJSON;
 public class ConverterFile extends javax.swing.JFrame {
 	private static final long serialVersionUID = 1L;
 	private String input, output, path;
-	private ConverterToXML converterToXML = new ConverterToXML();
-	private ConverterToJSON converterToJSON = new ConverterToJSON();
 
 	/**
 	 * Creates new form ConverterFile
@@ -180,19 +178,23 @@ public class ConverterFile extends javax.swing.JFrame {
 			if (file.getAbsolutePath().endsWith(".xml")) {
 				jTextArea1.setText(input);
 				try {
-					output = converterToJSON.convertToJSON(
-							path, false);
+					JDOMConverter jdc = new JDOMConverter(path);
+					jdc.convert();
+					output = jdc.toString(2);
 					jTextArea2.setText(output);
-				} catch (FileNotFoundException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} else if (file.getAbsolutePath().endsWith(".json")) {
 				jTextArea2.setText(input);
 				try {
-					output = converterToXML.convertToXML(
-							path, false);
+					JSONConverter jsc = new JSONConverter(path);
+					jsc.convert();
+					output = jsc.toString(2);
+					/*output = converterToXML.convertToXML(
+							path, false);*/
 					jTextArea1.setText(output);
-				} catch (FileNotFoundException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} else {

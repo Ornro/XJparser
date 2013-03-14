@@ -7,7 +7,7 @@ import gui.ConverterFile;
  * @version 1.0
  */
 public class Main {
-	public final void main(final String[] args) {
+	public static void main(final String[] args) {
 		new ConverterFile().setVisible(true);
 	}
 }
